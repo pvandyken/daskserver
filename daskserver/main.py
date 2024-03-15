@@ -2,10 +2,10 @@ import importlib.resources as impr
 import sys
 import subprocess as sp
 
-import dask_graham.commands as commands
+import daskserver.commands as commands
 
 def main(argv = sys.argv[1:]):
-    script = impr.files(commands) / "riatools"
+    script = impr.files(commands) / "daskserver.sh"
     try:
         sp.run([script] + argv, check=True)
     except sp.CalledProcessError as err:

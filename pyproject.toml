@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "daskserver"
-version = "0.0.1"
+version = "0.0.0"
 description = "Quick script for running dask servers on graham with kpy"
 authors = ["Peter Van Dyken <pvandyk2@uwo.ca>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "ria_tools"}]
+packages = [{include = "daskserver"}]
 
 [tool.poetry.dependencies]
 python = ">=2"
