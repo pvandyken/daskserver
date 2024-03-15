@@ -41,7 +41,7 @@ parse_args () {
     case "$1" in
       -h | --help )
         printHelp
-        exit 77
+        exit 0
         ;;
       -* | --* )
         ${PARSER:-err}
@@ -61,14 +61,18 @@ export bin="$(get_dir)"
 export lib="$(dirname "$bin")/lib"
 params="$(parse_args "$@")"
 
+if [[ -z "$(get 1 "$params")" ]]; then
+  printHelp
+  exit 0
+fi
+
 example_salloc="salloc --nodes 2 --tasks-per-node=2 --mem=16000M --cpus-per-task=3 --time=0-01:00"
 if [[ -z "${SLURM_JOB_ID:-}" ]]; then
   >&2 cat <<EOF 
-daskserver must be run on a compute node. Use a command like the following:
+daskserver must be run on a compute node. Start an interactive session first using a
+command like the following:
 
   $example_salloc
-
-to start an interactive compute session first
 EOF
   exit 1
 fi
@@ -77,11 +81,9 @@ if [[ "$SLURM_NTASKS" -eq 1 ]]; then
   >&2 cat <<EOF
 
 daskserver should typically be run with more than one task to take full advantage of
-parallelization. Use a command like the following:
+parallelization. Request multiple tasks with a command like the following:
 
   $example_salloc
-
-to request multiple tasks
 EOF
 fi
 
@@ -93,15 +95,17 @@ srun -N 2 -n 2 "$lib"/config_virtualenv.sh # set both -N and -n to the number of
 
 
 source $(kpy _kpy_wrapper)
+set +eu
 kpy activate $ENVNAME
+set -eu
 
 dask scheduler --host $DASK_SCHEDULER_ADDR --port $DASK_SCHEDULER_PORT &
 sleep 5
 
-srun $DIR/launch_dask_workers.sh &
+srun $lib/launch_dask_workers.sh &
 dask_cluster_pid=$!
 sleep 5
 echo "CLient address: tcp://$DASK_SCHEDULER_ADDR:$DASK_SCHEDULER_PORT"
-fg $dask_cluster_pid
+echo "Dashboard address: http://$DASK_SCHEDULER_ADDR:8787"
 
 
