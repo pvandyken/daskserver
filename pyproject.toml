@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "daskserver"
+version = "0.0.1"
+description = "Quick script for running dask servers on graham with kpy"
+authors = ["Peter Van Dyken <pvandyk2@uwo.ca>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "ria_tools"}]
+
+[tool.poetry.dependencies]
+python = ">=2"
+
+[tool.poetry.scripts]
+daskserver = "daskserver.main:main"
+
+[build-system]
+requires = ["poetry-core", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = 'git'
+metadata = true
+dirty = true
+bump = true
