@@ -91,7 +91,7 @@ export DASK_SCHEDULER_ADDR="$(hostname)"
 export DASK_SCHEDULER_PORT=34567
 export ENVNAME="$(get 1 "$params")"
 
-srun -N 2 -n 2 "$lib"/config_virtualenv.sh # set both -N and -n to the number of nodes
+srun -N $SLURM_NNODES -n $SLURM_NNODES "$lib"/config_virtualenv.sh # set both -N and -n to the number of nodes
 
 
 source $(kpy _kpy_wrapper)
